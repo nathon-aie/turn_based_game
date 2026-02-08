@@ -21,6 +21,20 @@
             pos_hint: {'center_x': 0.5}
             on_release: app.quit_button()
 
+<BackpackPopup>:
+    title: 'Backpack'
+    size_hint: (0.6, 0.4)
+    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+    auto_dismiss: True
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        Button:
+            text: "Exit"
+            size_hint_y: None
+            height: 50
+            on_release: root.dismiss()
+
 <BattleScreen>:
     BoxLayout:  
         orientation: 'vertical'
@@ -60,6 +74,7 @@
                 id: skill_3
                 text: 'Backpack'
                 font_size: 30
+                on_release: root.backpack_button()
             Button:
                 id: skill_5
                 text: 'Skill 3'

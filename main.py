@@ -15,6 +15,22 @@ class BackpackPopup(Popup):
 
 
 class BattleScreen(Screen):
+    def skill_1_button(self):
+        pass
+
+    def skill_2_button(self):
+        pass
+
+    def skill_3_button(self):
+        pass
+
+    def skill_4_button(self):
+        pass
+
+    def backpack_button(self):
+        p = BackpackPopup()
+        p.open()
+
     def run_button(self):
         self.manager.transition.direction = "right"
         self.manager.current = "title"
