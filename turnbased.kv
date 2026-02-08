@@ -21,14 +21,27 @@
             pos_hint: {'center_x': 0.5}
             on_release: app.quit_button()
 
+<ItemButton@Button>:
+    size_hint_y: None
+    height: 50
+    font_size: '20sp'
+
 <BackpackPopup>:
     title: 'Backpack'
-    size_hint: (0.6, 0.4)
+    size_hint: (0.9, 0.7)
     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
     auto_dismiss: True
     BoxLayout:
         orientation: 'vertical'
         padding: 10
+        ScrollView:
+            do_scroll_x: False
+            GridLayout:
+                id: item_grid_layout
+                cols: 1
+                spacing: 5
+                size_hint_y: None
+                height: self.minimum_height
         Button:
             text: "Exit"
             size_hint_y: None
@@ -39,7 +52,8 @@
     BoxLayout:  
         orientation: 'vertical'
         Label:
-            font_size: 50
+            id: result_label
+            font_size: 25
             text: 'Fight'
             size_hint_y: 0.1
         Label:
@@ -71,12 +85,12 @@
                 text: 'Skill 2'
                 font_size: 30
             Button:
-                id: skill_3
+                id: backpack
                 text: 'Backpack'
                 font_size: 30
                 on_release: root.backpack_button()
             Button:
-                id: skill_5
+                id: skill_3
                 text: 'Skill 3'
                 font_size: 30
             Button:
