@@ -15,7 +15,9 @@ class BackpackPopup(Popup):
 
 
 class BattleScreen(Screen):
-    pass
+    def run_button(self):
+        self.manager.transition.direction = "right"
+        self.manager.current = "title"
 
 
 class TurnBasedApp(App):
