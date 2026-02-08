@@ -1,5 +1,5 @@
 <TitleScreen>:
-        BoxLayout:
+    BoxLayout:
         orientation: 'vertical'
         spacing: 30
         padding: [0, 100, 0, 100]
@@ -12,18 +12,14 @@
             size_hint: (None, None)
             size: (200, 100)
             pos_hint: {'center_x': 0.5}
-            on_press: 
-                root.manager.transition.direction = 'left'
-                root.manager.current = 'battle'
+            on_release: root.play_button()
         Button:
             text: 'QUIT'
             font_size: 50
             size_hint: (None, None)
             size: (200, 100)
             pos_hint: {'center_x': 0.5}
-            on_press: app.stop()
-
-
+            on_release: app.quit_button()
 
 <BattleScreen>:
     BoxLayout:  
