@@ -3,8 +3,6 @@ from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
 from kivy.factory import Factory
-from kivy.properties import StringProperty
-from kivy.event import EventDispatcher
 
 
 class TitleScreen(Screen):
