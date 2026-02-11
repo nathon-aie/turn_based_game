@@ -1,3 +1,11 @@
+<Player@Widget>:
+    size_hint: None, None
+    size: 75, 75
+    canvas:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
 <TitleScreen>:
     BoxLayout:
         orientation: 'vertical'
@@ -31,18 +39,22 @@
             font_size: 25
             size_hint_y: 0.1
             pos_hint: {'center_x': 0.5}
-        BoxLayout:
+        RelativeLayout:
             size_hint_y: 0.7
             canvas.before:
                 Color:
                     rgba: 0.3, 1, 0.3, 1 
                 Rectangle:
-                    pos: self.pos
-                    size: self.size
+                    pos: (0, 0)
+                    size: (self.size)
             Label:
-                text: "Map Area"
-                font_size: 30
-                color: 0, 0, 0, 1
+                text: "Map Area (Press W,A,S,D to walk)"
+                font_size: 20
+                color: (0, 0, 0, 0.5)
+                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            Player:
+                id: player_character
+                pos: (100, 100)
         BoxLayout:
             id: stats_label
             size_hint_y: 0.2

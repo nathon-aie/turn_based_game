@@ -3,6 +3,7 @@ from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
 from kivy.factory import Factory
+from kivy.properties import ObjectProperty
 
 
 class TitleScreen(Screen):
@@ -12,7 +13,29 @@ class TitleScreen(Screen):
 
 
 class WorldScreen(Screen):
-    pass
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._keyboard = Window.request_keyboard(self._on_keyboard_closed, self)
+        self._keyboard.bind(on_key_down=self._on_key_down)
+
+    def _on_keyboard_closed(self):
+        self._keyboard.unbind(on_key_down=self._on_key_down)
+        self._keyboard = None
+
+    def _on_key_down(self, keyboard, keycode, text, modifiers):
+        player = self.ids.player_character
+        step = 100
+        cur_x = player.pos[0]
+        cur_y = player.pos[1]
+        if text == "w":
+            cur_y += step
+        if text == "d":
+            cur_x += step
+        if text == "a":
+            cur_x -= step
+        if text == "s":
+            cur_y -= step
+        player.pos = (cur_x, cur_y)
 
 
 class BackpackPopup(Popup):
@@ -62,10 +85,6 @@ class TurnBasedApp(App):
 
     def build(self):
         Window.size = (720, 480)
-        # sm = ScreenManager()
-        # sm.add_widget(TitleScreen(name="title"))
-        # sm.add_widget(BattleScreen(name="battle"))
-        # return sm
         return WorldScreen()
 
 
