@@ -7,4 +7,4 @@ Builder.load_file("screens/title_screen.kv")
 class TitleScreen(Screen):
     def play_button(self):
         self.manager.transition.direction = "left"
-        self.manager.current = "battle"
+        self.manager.current = "world"

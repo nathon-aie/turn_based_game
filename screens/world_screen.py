@@ -17,15 +17,30 @@ class WorldScreen(Screen):
 
     def _on_key_down(self, keyboard, keycode, text, modifiers):
         player = self.ids.player_character
+        map_area = self.ids.map_area
         step = 100
         cur_x = player.pos[0]
         cur_y = player.pos[1]
         if text == "w":
             cur_y += step
-        if text == "d":
+        elif text == "d":
             cur_x += step
-        if text == "a":
+        elif text == "a":
             cur_x -= step
-        if text == "s":
+        elif text == "s":
             cur_y -= step
+        else:
+            return
+        # Boundary checks
+        if cur_x < 0:
+            cur_x = 0
+        right_boundary = map_area.width - player.width
+        if cur_x > right_boundary:
+            cur_x = right_boundary
+            cur_x = right_boundary
+        if cur_y < 0:
+            cur_y = 0
+        top_boundary = map_area.height - player.height
+        if cur_y > top_boundary:
+            cur_y = top_boundary
         player.pos = (cur_x, cur_y)

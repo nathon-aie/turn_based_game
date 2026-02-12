@@ -6,12 +6,6 @@ from screens.battle_screen import BattleScreen
 from screens.world_screen import WorldScreen
 
 
-class TitleScreen(Screen):
-    def play_button(self):
-        self.manager.transition.direction = "left"
-        self.manager.current = "battle"
-
-
 class TurnBasedApp(App):
     def quit_button(self):
         self.stop()
