@@ -2,6 +2,7 @@ from kivy.uix.screenmanager import Screen
 from widgets.backpack import BackpackPopup
 from kivy.lang import Builder
 import random
+import time
 
 Builder.load_file("screens/battle_screen.kv")
 
@@ -49,17 +50,45 @@ class BattleScreen(Screen):
             display_text = f"{self.hero.name}\nHP: {self.hero.hp}"
             self.ids.hero_stat_label.text = display_text
 
+    def check_enemy_status(self):
+        if self.current_enemy.hp <= 0:
+            self.current_enemy.hp = 0
+            self.ids.result_label.text = f"Victory! {self.current_enemy.name} defeated."
+
     def skill_1_button(self):
-        pass
+        # skill testing
+        if self.current_enemy and self.current_enemy.hp > 0:
+            damage = 15
+            self.current_enemy.hp -= damage
+            self.check_enemy_status()
+            self.update_ui()
 
     def skill_2_button(self):
-        pass
+        # skill testing
+        if self.current_enemy and self.current_enemy.hp > 0:
+            damage = 10
+            self.current_enemy.hp -= damage
+            self.check_enemy_status()
+            self.update_ui()
 
     def skill_3_button(self):
-        pass
+        # skill testing
+        if self.current_enemy and self.current_enemy.hp > 0:
+            damage = 20
+            self.current_enemy.hp -= damage
+            self.check_enemy_status()
+            self.update_ui()
 
     def skill_4_button(self):
-        pass
+        # skill testing
+        max_hp = self.hero.hp
+        if self.hero.hp < max_hp:
+            heal = 20
+            self.hero.hp += heal
+            if self.hero.hp > max_hp:
+                self.hero.hp = max_hp
+            self.check_enemy_status()
+            self.update_ui()
 
     def backpack_button(self):
         items = {"Item 1": 10, "Item 2": 20, "Item 3": 30}
