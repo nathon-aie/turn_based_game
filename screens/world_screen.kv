@@ -25,14 +25,27 @@
                 Rectangle:
                     pos: (0, 0)
                     size: (self.size)
-            Label:
-                text: "Map Area (Press W,A,S,D to walk)"
-                font_size: 20
-                color: (0, 0, 0, 0.5)
+            Widget:
+                id: grass_area
+                size_hint: None, None
+                size: 225, 225
                 pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                canvas:
+                    Color:
+                        rgba: 0, 0.5, 0, 0.8
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
             Player:
                 id: player_character
                 pos: (100, 100)
+                canvas: 
+                    Color:
+                        rgba: 1, 1, 1, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+            
         BoxLayout:
             id: stats_label
             size_hint_y: 0.2

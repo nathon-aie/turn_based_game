@@ -1,6 +1,7 @@
 from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
 from kivy.lang import Builder
+import random
 
 Builder.load_file("screens/world_screen.kv")
 
@@ -44,3 +45,9 @@ class WorldScreen(Screen):
         if cur_y > top_boundary:
             cur_y = top_boundary
         player.pos = (cur_x, cur_y)
+
+        grass = self.ids.grass_area
+        if player.collide_widget(grass):
+            if random.randint(1, 100) <= 20:  # โอกาส 20%
+                self.manager.transition.direction = "left"
+                self.manager.current = "battle"

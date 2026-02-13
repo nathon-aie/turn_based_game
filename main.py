@@ -12,7 +12,6 @@ class TurnBasedApp(App):
 
     def build(self):
         Window.size = (720, 480)
-        # return WorldScreen()
         sm = ScreenManager()
         sm.add_widget(TitleScreen(name="title"))
         sm.add_widget(BattleScreen(name="battle"))
