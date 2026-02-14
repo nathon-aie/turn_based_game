@@ -64,15 +64,15 @@ class BattleScreen(Screen):
             self.ids.skill_3,
             self.ids.skill_4,
         ]
-        for i, btn in enumerate(buttons):
+        for i, button in enumerate(buttons):
             if i < len(self.hero.skills):
                 skill_name = self.hero.skills[i]
-                btn.text = skill_name
-                btn.disabled = False
-                btn.unbind(on_release=self.on_skill_press)
+                button.text = skill_name
+                button.disabled = False
+                button.unbind(on_release=self.on_skill_press)
             else:
-                btn.text = "-"
-                btn.disabled = True
+                button.text = "-"
+                button.disabled = True
 
     def on_skill_press(self, button_instance):
         if not self.is_player_turn:
@@ -80,20 +80,20 @@ class BattleScreen(Screen):
         skill_name = button_instance.text
         self.execute_skill(self.hero, self.current_enemy, skill_name)
 
-    def execute_skill(self, attacker, defender, skill_name):
+    def execute_skill(self, hero, enemy, skill_name):
         if skill_name not in gamedata.SKILLS:
             return
         skill_info = gamedata.SKILLS[skill_name]
         multiplier = skill_info["value"]
-        final_value = int(attacker.atk * attacker.atk_buff + multiplier)
+        final_value = int(hero.atk * hero.atk_buff + multiplier)
         if skill_info["type"] == "attack":
-            if defender and defender.hp > 0:
-                defender.hp -= final_value
+            if enemy and enemy.hp > 0:
+                enemy.hp -= final_value
                 self.ids.result_label.text = f"Used {skill_name}! {final_value} Dmg."
         elif skill_info["type"] == "heal":
-            attacker.hp += final_value
-            if attacker.hp > attacker.max_hp:
-                attacker.hp = attacker.max_hp
+            hero.hp += final_value
+            if hero.hp > hero.max_hp:
+                hero.hp = hero.max_hp
             self.ids.result_label.text = f"Used {skill_name}! Healed {final_value}."
         self.update_ui()
         if not self.check_enemy_status():

@@ -3,7 +3,10 @@ from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Rectangle
+from kivy.clock import Clock
 import random
+import json
+import os
 
 from widgets.stats import StatusPopup
 from widgets.backpack import BackpackPopup
@@ -102,3 +105,17 @@ class WorldScreen(Screen):
     def exit_button(self):
         self.manager.transition.direction = "right"
         self.manager.current = "title"
+
+    def save_game(self):
+        battle_screen = self.manager.get_screen("battle")
+        if not battle_screen.hero:
+            return
+        save_data = {
+            "hero": battle_screen.hero.to_dict(),
+            "inventory": battle_screen.inventory,
+            "position": self.ids.player_character.pos,
+            "current_map": "world_1",
+        }
+        with open("savefile.json", "w") as f:
+            json.dump(save_data, f, indent=4)
+            print("Game saved successfully.")
