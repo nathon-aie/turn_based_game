@@ -1,12 +1,26 @@
 from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
 from kivy.lang import Builder
+from kivy.uix.widget import Widget
+from kivy.graphics import Color, Rectangle
 import random
 
 from widgets.stats import StatusPopup
 from widgets.backpack import BackpackPopup
 
 Builder.load_file("screens/world_screen.kv")
+
+
+TILE_SIZE = 60
+tile_map = [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 1],
+    [1, 0, 2, 2, 0, 0, 0, 2, 2, 0, 0, 1],
+    [1, 0, 2, 2, 0, 1, 1, 1, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+]
 
 
 class WorldScreen(Screen):
@@ -19,39 +33,53 @@ class WorldScreen(Screen):
         self._keyboard.unbind(on_key_down=self._on_key_down)
         self._keyboard = None
 
+    def on_enter(self):
+        self.draw_map()
+
+    def draw_map(self):
+        map_area = self.ids.map_area
+        with map_area.canvas.before:
+            for row_index, row_data in enumerate(tile_map):
+                for col_index, tile_type in enumerate(row_data):
+                    x = col_index * TILE_SIZE
+                    y = row_index * TILE_SIZE
+                    if tile_type == 1:  # Wall
+                        Color(0.5, 0.5, 0.5, 1)
+                    elif tile_type == 2:  # Bush
+                        Color(0, 0.5, 0, 1)
+                    else:  # Ground (0)
+                        Color(0.2, 0.8, 0.2, 1)
+                    Rectangle(pos=(x, y), size=(TILE_SIZE, TILE_SIZE))
+
     def _on_key_down(self, keyboard, keycode, text, modifiers):
         player = self.ids.player_character
-        map_area = self.ids.map_area
-        step = 100
-        cur_x = player.pos[0]
-        cur_y = player.pos[1]
+        cur_col = int(player.pos[0] / TILE_SIZE)
+        cur_row = int(player.pos[1] / TILE_SIZE)
+        next_col = cur_col
+        next_row = cur_row
         if text == "w":
-            cur_y += step
+            next_row += 1
         elif text == "d":
-            cur_x += step
+            next_col += 1
         elif text == "a":
-            cur_x -= step
+            next_col -= 1
         elif text == "s":
-            cur_y -= step
+            next_row -= 1
         else:
             return
-        # Boundary checks
-        if cur_x < 0:
-            cur_x = 0
-        right_boundary = map_area.width - player.width
-        if cur_x > right_boundary:
-            cur_x = right_boundary
-            cur_x = right_boundary
-        if cur_y < 0:
-            cur_y = 0
-        top_boundary = map_area.height - player.height
-        if cur_y > top_boundary:
-            cur_y = top_boundary
-        player.pos = (cur_x, cur_y)
-
-        grass = self.ids.grass_area
-        if player.collide_widget(grass):
-            if random.randint(1, 100) <= 20:  # โอกาส 20%
+        if (
+            next_row < 0
+            or next_row >= len(tile_map)
+            or next_col < 0
+            or next_col >= len(tile_map[0])
+        ):
+            return
+        target_tile = tile_map[next_row][next_col]
+        if target_tile == 1:
+            return
+        player.pos = (next_col * TILE_SIZE, next_row * TILE_SIZE)
+        if target_tile == 2:
+            if random.randint(1, 100) <= 20:
                 self.manager.transition.direction = "left"
                 self.manager.current = "battle"
 
