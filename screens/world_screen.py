@@ -51,3 +51,7 @@ class WorldScreen(Screen):
             if random.randint(1, 100) <= 20:  # โอกาส 20%
                 self.manager.transition.direction = "left"
                 self.manager.current = "battle"
+
+    def exit_button(self):
+        self.manager.transition.direction = "right"
+        self.manager.current = "title"
