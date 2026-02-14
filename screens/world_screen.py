@@ -4,6 +4,7 @@ from kivy.lang import Builder
 import random
 
 from widgets.stats import StatusPopup
+from widgets.backpack import BackpackPopup
 
 Builder.load_file("screens/world_screen.kv")
 
@@ -59,6 +60,16 @@ class WorldScreen(Screen):
         if hasattr(character, "hero") and character.hero:
             popup = StatusPopup(character.hero)
             popup.open()
+
+    def backpack_button(self):
+        backpack = self.manager.get_screen("battle")
+        popup = BackpackPopup(
+            item_list=backpack.inventory, callback_func=self.do_nothing
+        )
+        popup.open()
+
+    def do_nothing(self):
+        pass
 
     def exit_button(self):
         self.manager.transition.direction = "right"
