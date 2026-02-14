@@ -15,14 +15,15 @@ Builder.load_file("screens/world_screen.kv")
 
 
 TILE_SIZE = 60
+SPAWN_POINT = (60, 60)
 tile_map = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 1],
-    [1, 0, 2, 2, 0, 0, 0, 2, 2, 0, 0, 1],
-    [1, 0, 2, 2, 0, 1, 1, 1, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 1, 2, 2, 1],
+    [1, 0, 2, 2, 0, 0, 0, 2, 2, 0, 0, 1, 2, 2, 1],
+    [1, 0, 2, 2, 0, 1, 1, 1, 1, 0, 0, 1, 2, 2, 1],
+    [1, 0, 0, 0, 0, 1, 3, 3, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 1, 3, 3, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ]
 
 
@@ -51,6 +52,8 @@ class WorldScreen(Screen):
                         Color(0.5, 0.5, 0.5, 1)
                     elif tile_type == 2:  # Bush
                         Color(0, 0.5, 0, 1)
+                    elif tile_type == 3:  # Water (ฟ้า)
+                        Color(0, 0.4, 0.8, 1)
                     else:  # Ground (0)
                         Color(0.2, 0.8, 0.2, 1)
                     Rectangle(pos=(x, y), size=(TILE_SIZE, TILE_SIZE))
@@ -80,6 +83,10 @@ class WorldScreen(Screen):
             return
         target_tile = tile_map[next_row][next_col]
         if target_tile == 1:
+            return
+        if target_tile == 3: # ตกน้ำ (วาร์ปกลับจุดเกิด)
+            player.pos = SPAWN_POINT
+            print("You fell into the water! Respawning...")
             return
         player.pos = (next_col * TILE_SIZE, next_row * TILE_SIZE)
         if target_tile == 2:
