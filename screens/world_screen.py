@@ -119,3 +119,23 @@ class WorldScreen(Screen):
         with open("savefile.json", "w") as f:
             json.dump(save_data, f, indent=4)
             print("Game saved successfully.")
+
+    def load_game(self):
+        if not os.path.exists("savefile.json"):
+            print("No save file found!")
+            return
+        with open("savefile.json", "r") as f:
+            data = json.load(f)
+        battle_screen = self.manager.get_screen("battle")
+        if not battle_screen.hero:
+            battle_screen.spawn_hero()
+        hero_data = data.get("hero")
+        if hero_data:
+            battle_screen.hero.load_from_dict(hero_data)
+        inventory_data = data.get("inventory")
+        if inventory_data:
+            battle_screen.inventory = inventory_data
+        pos_data = data.get("position")
+        if pos_data:
+            self.ids.player_character.pos = tuple(pos_data)
+        print("Game Loaded Successfully!")
