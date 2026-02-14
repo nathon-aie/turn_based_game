@@ -46,9 +46,8 @@
                         pos: self.pos
                         size: self.size
                         source: ("pics/character/mambo.jpg")
-            
-        BoxLayout:
-            id: stats_label
+        GridLayout:
+            cols: 4
             size_hint_y: 0.2
             canvas.before: 
                 Color: 
@@ -56,8 +55,15 @@
                 Rectangle: 
                     pos: (self.pos)
                     size: (self.size)
-            Label:
-                text: "STATS"
-                pos_hint: {'center_x': 0.5}
-                color: 0, 0, 0, 1
-                font_size: 30
+            Button:
+                text: "Stats"
+                font_size: 25
+            Button:
+                text: "Backpack"
+                font_size: 25
+            Button:
+                text: "Save"
+                font_size: 25
+            Button:
+                text: "Exit"
+                font_size: 25
