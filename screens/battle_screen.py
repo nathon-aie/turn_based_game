@@ -2,8 +2,8 @@ from kivy.uix.screenmanager import Screen
 from widgets.backpack import BackpackPopup
 from kivy.lang import Builder
 from kivy.clock import Clock
-from character.hero import Hero
-from character.enemy import Enemy
+from objects.hero import Hero
+from objects.enemy import Enemy
 import random
 
 Builder.load_file("screens/battle_screen.kv")
@@ -14,40 +14,49 @@ class BattleScreen(Screen):
         super().__init__(**kwargs)
         self.current_enemy = None
         self.is_player_turn = True
+        self.spawn_hero()
         self.inventory = {"Potion": 10, "Bomb": 10}
 
-    def on_enter(self):
-        self.spawn_hero()
-        self.spawn_enemy()
-        self.update_ui()
-        Clock.schedule_once(self.enable_skills, 1.5)
+    def button_disabled(self, *args):
         self.ids.skill_1.disabled = True
         self.ids.skill_2.disabled = True
         self.ids.skill_3.disabled = True
         self.ids.skill_4.disabled = True
         self.ids.backpack.disabled = True
         self.ids.run.disabled = True
-        self.ids.result_label.text = f"{self.current_enemy.name} appears!"
 
-    def enable_skills(self, dt):
+    def button_enabled(self, *args):
         self.ids.skill_1.disabled = False
         self.ids.skill_2.disabled = False
         self.ids.skill_3.disabled = False
         self.ids.skill_4.disabled = False
         self.ids.backpack.disabled = False
         self.ids.run.disabled = False
+
+    def on_enter(self):
+        self.hero.atk_buff = 1
+        self.spawn_enemy()
+        self.update_ui()
+        Clock.schedule_once(self.enable_skills, 1)
+        self.button_disabled()
+        self.ids.result_label.text = f"{self.current_enemy.name} appears!"
+
+    def enable_skills(self, dt):
+        self.button_enabled()
         self.ids.result_label.text = "Fight!"
         self.ids.run.text = "Run"
         self.start_player_turn()
 
     def spawn_hero(self):
-        self.hero = Hero("Mambo", 100)
+        self.hero = Hero("Mambo", 100, 15)
 
     def spawn_enemy(self):
         possible_enemies = [
-            Enemy("Noob Slayer", 50),
-            Enemy("Goblin Slayer", 80),
-            Enemy("God Slayer", 30),
+            Enemy("Noob Slayer", 30, 10),
+            Enemy("Goblin Slayer", 50, 12),
+            Enemy("God Slayer", 80, 18),
+            Enemy("Anuthin", 100, 20),
+            Enemy("Anuthin Slayer", 150, 25),
         ]
         self.current_enemy = random.choice(possible_enemies)
 
@@ -60,19 +69,25 @@ class BattleScreen(Screen):
         if self.hero:
             if self.hero.hp < 0:
                 self.hero.hp = 0
-            display_text = f"{self.hero.name}\nHP: {self.hero.hp}"
-            self.ids.hero_stat_label.text = display_text
+            self.ids.hero_stat_label.text = f"{self.hero.name}\nHP: {self.hero.hp}"
 
     def check_enemy_status(self):
         if self.current_enemy.hp <= 0:
             self.current_enemy.hp = 0
             self.ids.result_label.text = f"Victory! {self.current_enemy.name} defeated."
             self.ids.run.text = "Exit"
-            self.ids.skill_1.disabled = True
-            self.ids.skill_2.disabled = True
-            self.ids.skill_3.disabled = True
-            self.ids.skill_4.disabled = True
-            self.ids.backpack.disabled = True
+            self.button_disabled()
+            self.ids.run.disabled = False
+            return True
+        return False
+
+    def check_hero_status(self):
+        if self.hero.hp <= 0:
+            self.hero.hp = 0
+            self.ids.result_label.text = "Game Over... You died."
+            self.button_disabled()
+            self.ids.run.text = "Exit"
+            self.ids.run.disabled = False
             return True
         return False
 
@@ -80,50 +95,47 @@ class BattleScreen(Screen):
         if not self.is_player_turn:
             return
         if self.current_enemy and self.current_enemy.hp > 0:
-            damage = 15
+            damage = random.randint(
+                int(self.hero.atk * 0.8), int(self.hero.atk * 1.2 + 15)
+            )
             self.current_enemy.hp -= damage
             self.ids.result_label.text = f"Used Skill 1! Dmg: {damage}"
             self.update_ui()
-            is_dead = self.check_enemy_status()
-            if is_dead:
-                pass
-            else:
+            if not self.check_enemy_status():
                 self.end_player_turn()
 
     def skill_2_button(self):
         if not self.is_player_turn:
             return
         if self.current_enemy and self.current_enemy.hp > 0:
-            damage = 10
+            self.hero.atk_buff *= 1.3
+            damage = random.randint(
+                int(self.hero.atk * self.hero.atk_buff * 0.8 + 10),
+                int(self.hero.atk * self.hero.atk_buff * 1.2 + 10),
+            )
             self.current_enemy.hp -= damage
-            self.ids.result_label.text = f"Used Skill 1! Dmg: {damage}"
+            self.ids.result_label.text = f"Used Skill 2! Dmg: {damage}"
             self.update_ui()
-            is_dead = self.check_enemy_status()
-
-            if is_dead:
-                pass
-            else:
+            if not self.check_enemy_status():
                 self.end_player_turn()
 
     def skill_3_button(self):
         if not self.is_player_turn:
             return
         if self.current_enemy and self.current_enemy.hp > 0:
-            damage = 20
+            damage = random.randint(
+                int(self.hero.atk * 0.8 + 20), int(self.hero.atk * 1.2 + 20)
+            )
             self.current_enemy.hp -= damage
-            self.ids.result_label.text = f"Used Skill 1! Dmg: {damage}"
+            self.ids.result_label.text = f"Used Skill 3! Dmg: {damage}"
             self.update_ui()
-            is_dead = self.check_enemy_status()
-
-            if is_dead:
-                pass
-            else:
+            if not self.check_enemy_status():
                 self.end_player_turn()
 
     def skill_4_button(self):
         if not self.is_player_turn:
             return
-        heal = 20
+        heal = random.randint(int(self.hero.atk * 1.2), int(self.hero.atk * 1.5))
         self.hero.hp += heal
         if self.hero.hp > self.hero.max_hp:
             self.hero.hp = self.hero.max_hp
@@ -134,35 +146,25 @@ class BattleScreen(Screen):
     def end_player_turn(self):
         self.is_player_turn = False
         self.ids.result_label.text += " (Enemy Turn...)"
-        self.ids.skill_1.disabled = True
-        self.ids.skill_2.disabled = True
-        self.ids.skill_3.disabled = True
-        self.ids.skill_4.disabled = True
-        Clock.schedule_once(self.enemy_turn_logic, 1.5)
+        self.button_disabled()
+        Clock.schedule_once(self.enemy_turn, 1.5)
 
-    def enemy_turn_logic(self, dt):
+    def enemy_turn(self, dt):
         if not self.current_enemy or self.current_enemy.hp <= 0:
             return
-        enemy_damage = random.randint(5, 15)
+        enemy_damage = random.randint(
+            int(self.current_enemy.atk * 0.8), int(self.current_enemy.atk * 1.2)
+        )
         self.hero.hp -= enemy_damage
         self.ids.result_label.text = f"Enemy hits you for {enemy_damage}!"
         self.update_ui()
-        if self.hero.hp <= 0:
-            self.hero.hp = 0
-            self.ids.result_label.text = "Game Over... You died."
-            self.manager.transition.direction = "right"
-            self.manager.current = "world"
-        else:
+        if not self.check_hero_status():
             self.start_player_turn()
 
     def start_player_turn(self):
         self.is_player_turn = True
         self.ids.result_label.text = "Your Turn!"
-        self.ids.skill_1.disabled = False
-        self.ids.skill_2.disabled = False
-        self.ids.skill_3.disabled = False
-        self.ids.skill_4.disabled = False
-        self.ids.backpack.disabled = False
+        self.button_enabled()
 
     def backpack_button(self):
         if not self.is_player_turn or (
