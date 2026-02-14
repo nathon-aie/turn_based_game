@@ -3,6 +3,8 @@ from kivy.core.window import Window
 from kivy.lang import Builder
 import random
 
+from widgets.stats import StatusPopup
+
 Builder.load_file("screens/world_screen.kv")
 
 
@@ -51,6 +53,12 @@ class WorldScreen(Screen):
             if random.randint(1, 100) <= 20:  # โอกาส 20%
                 self.manager.transition.direction = "left"
                 self.manager.current = "battle"
+
+    def status_button(self):
+        character = self.manager.get_screen("battle")
+        if hasattr(character, "hero") and character.hero:
+            popup = StatusPopup(character.hero)
+            popup.open()
 
     def exit_button(self):
         self.manager.transition.direction = "right"
