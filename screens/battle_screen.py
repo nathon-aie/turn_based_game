@@ -5,6 +5,7 @@ from kivy.clock import Clock
 from objects.hero import Hero
 from objects.enemy import Enemy
 import random
+import gamedata
 
 Builder.load_file("screens/battle_screen.kv")
 
@@ -48,17 +49,55 @@ class BattleScreen(Screen):
         self.start_player_turn()
 
     def spawn_hero(self):
-        self.hero = Hero("Mambo", 100, 15)
+        self.hero = Hero("Tanker")
+        self.update_skill_buttons()
 
     def spawn_enemy(self):
-        possible_enemies = [
-            Enemy("Noob Slayer", 30, 10),
-            Enemy("Goblin Slayer", 50, 12),
-            Enemy("God Slayer", 80, 18),
-            Enemy("Anuthin", 100, 20),
-            Enemy("Anuthin Slayer", 150, 25),
+        enemy_list = list(gamedata.ENEMIES.keys())
+        enemy_name = random.choice(enemy_list)
+        self.current_enemy = Enemy(enemy_name)
+
+    def update_skill_buttons(self):
+        buttons = [
+            self.ids.skill_1,
+            self.ids.skill_2,
+            self.ids.skill_3,
+            self.ids.skill_4,
         ]
-        self.current_enemy = random.choice(possible_enemies)
+        for i, btn in enumerate(buttons):
+            if i < len(self.hero.skills):
+                skill_name = self.hero.skills[i]
+                btn.text = skill_name
+                btn.disabled = False
+                btn.unbind(on_release=self.on_skill_press)
+            else:
+                btn.text = "-"
+                btn.disabled = True
+
+    def on_skill_press(self, button_instance):
+        if not self.is_player_turn:
+            return
+        skill_name = button_instance.text
+        self.execute_skill(self.hero, self.current_enemy, skill_name)
+
+    def execute_skill(self, attacker, defender, skill_name):
+        if skill_name not in gamedata.SKILLS:
+            return
+        skill_info = gamedata.SKILLS[skill_name]
+        multiplier = skill_info["value"]
+        final_value = int(attacker.atk * attacker.atk_buff + multiplier)
+        if skill_info["type"] == "attack":
+            if defender and defender.hp > 0:
+                defender.hp -= final_value
+                self.ids.result_label.text = f"Used {skill_name}! {final_value} Dmg."
+        elif skill_info["type"] == "heal":
+            attacker.hp += final_value
+            if attacker.hp > attacker.max_hp:
+                attacker.hp = attacker.max_hp
+            self.ids.result_label.text = f"Used {skill_name}! Healed {final_value}."
+        self.update_ui()
+        if not self.check_enemy_status():
+            self.end_player_turn()
 
     def update_ui(self):
         if self.current_enemy:
@@ -90,58 +129,6 @@ class BattleScreen(Screen):
             self.ids.run.disabled = False
             return True
         return False
-
-    def skill_1_button(self):
-        if not self.is_player_turn:
-            return
-        if self.current_enemy and self.current_enemy.hp > 0:
-            damage = random.randint(
-                int(self.hero.atk * 0.8), int(self.hero.atk * 1.2 + 15)
-            )
-            self.current_enemy.hp -= damage
-            self.ids.result_label.text = f"Used Skill 1! Dmg: {damage}"
-            self.update_ui()
-            if not self.check_enemy_status():
-                self.end_player_turn()
-
-    def skill_2_button(self):
-        if not self.is_player_turn:
-            return
-        if self.current_enemy and self.current_enemy.hp > 0:
-            self.hero.atk_buff *= 1.3
-            damage = random.randint(
-                int(self.hero.atk * self.hero.atk_buff * 0.8 + 10),
-                int(self.hero.atk * self.hero.atk_buff * 1.2 + 10),
-            )
-            self.current_enemy.hp -= damage
-            self.ids.result_label.text = f"Used Skill 2! Dmg: {damage}"
-            self.update_ui()
-            if not self.check_enemy_status():
-                self.end_player_turn()
-
-    def skill_3_button(self):
-        if not self.is_player_turn:
-            return
-        if self.current_enemy and self.current_enemy.hp > 0:
-            damage = random.randint(
-                int(self.hero.atk * 0.8 + 20), int(self.hero.atk * 1.2 + 20)
-            )
-            self.current_enemy.hp -= damage
-            self.ids.result_label.text = f"Used Skill 3! Dmg: {damage}"
-            self.update_ui()
-            if not self.check_enemy_status():
-                self.end_player_turn()
-
-    def skill_4_button(self):
-        if not self.is_player_turn:
-            return
-        heal = random.randint(int(self.hero.atk * 1.2), int(self.hero.atk * 1.5))
-        self.hero.hp += heal
-        if self.hero.hp > self.hero.max_hp:
-            self.hero.hp = self.hero.max_hp
-        self.ids.result_label.text = f"Healed {heal} HP!"
-        self.update_ui()
-        self.end_player_turn()
 
     def end_player_turn(self):
         self.is_player_turn = False
