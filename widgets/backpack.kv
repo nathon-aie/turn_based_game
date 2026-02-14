@@ -1,26 +1,33 @@
-<ItemButton@Button>:
-    size_hint_y: None
-    height: 50
-    font_size: '20sp'
-
 <BackpackPopup>:
     title: 'Backpack'
-    size_hint: (0.9, 0.7)
-    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-    auto_dismiss: True
+    size_hint: (0.9, 0.8)
     BoxLayout:
         orientation: 'vertical'
-        padding: 10
-        ScrollView:
-            do_scroll_x: False
-            GridLayout:
-                id: item_grid_layout
-                cols: 1
-                spacing: 5
-                size_hint_y: None
-                height: self.minimum_height
-        Button:
-            text: "Exit"
-            size_hint_y: None
-            height: 50
-            on_release: root.dismiss()
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: 0.7
+            ScrollView:
+                size_hint_x: 0.6
+                GridLayout:
+                    id: item_grid_layout
+                    cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
+            Label:
+                id: description_label
+                text: "Select an item..."
+                size_hint_x: 0.4
+                text_size: self.size
+                halign: 'center'
+                valign: 'middle'
+        BoxLayout:
+            size_hint_y: 0.2
+            spacing: 10
+            padding: 5
+            
+            Button:
+                text: "Use Item"
+                on_release: root.confirm_use() # ปุ่มยืนยัน
+            Button:
+                text: "Cancel"
+                on_release: root.dismiss()

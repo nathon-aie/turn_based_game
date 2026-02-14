@@ -2,23 +2,11 @@ from kivy.uix.screenmanager import Screen
 from widgets.backpack import BackpackPopup
 from kivy.lang import Builder
 from kivy.clock import Clock
+from character.hero import Hero
+from character.enemy import Enemy
 import random
 
 Builder.load_file("screens/battle_screen.kv")
-
-
-class Enemy:
-    def __init__(self, name, hp):
-        self.name = name
-        self.hp = hp
-        self.max_hp = hp
-
-
-class Hero:
-    def __init__(self, name, hp):
-        self.name = name
-        self.hp = hp
-        self.max_hp = hp
 
 
 class BattleScreen(Screen):
@@ -26,11 +14,31 @@ class BattleScreen(Screen):
         super().__init__(**kwargs)
         self.current_enemy = None
         self.is_player_turn = True
+        self.inventory = {"Potion": 10, "Bomb": 10}
 
     def on_enter(self):
         self.spawn_hero()
         self.spawn_enemy()
         self.update_ui()
+        Clock.schedule_once(self.enable_skills, 1.5)
+        self.ids.skill_1.disabled = True
+        self.ids.skill_2.disabled = True
+        self.ids.skill_3.disabled = True
+        self.ids.skill_4.disabled = True
+        self.ids.backpack.disabled = True
+        self.ids.run.disabled = True
+        self.ids.result_label.text = f"{self.current_enemy.name} appears!"
+
+    def enable_skills(self, dt):
+        self.ids.skill_1.disabled = False
+        self.ids.skill_2.disabled = False
+        self.ids.skill_3.disabled = False
+        self.ids.skill_4.disabled = False
+        self.ids.backpack.disabled = False
+        self.ids.run.disabled = False
+        self.ids.result_label.text = "Fight!"
+        self.ids.run.text = "Run"
+        self.start_player_turn()
 
     def spawn_hero(self):
         self.hero = Hero("Mambo", 100)
@@ -59,6 +67,7 @@ class BattleScreen(Screen):
         if self.current_enemy.hp <= 0:
             self.current_enemy.hp = 0
             self.ids.result_label.text = f"Victory! {self.current_enemy.name} defeated."
+            self.ids.run.text = "Exit"
             self.ids.skill_1.disabled = True
             self.ids.skill_2.disabled = True
             self.ids.skill_3.disabled = True
@@ -68,7 +77,6 @@ class BattleScreen(Screen):
         return False
 
     def skill_1_button(self):
-        # skill testing
         if not self.is_player_turn:
             return
         if self.current_enemy and self.current_enemy.hp > 0:
@@ -83,7 +91,6 @@ class BattleScreen(Screen):
                 self.end_player_turn()
 
     def skill_2_button(self):
-        # skill testing
         if not self.is_player_turn:
             return
         if self.current_enemy and self.current_enemy.hp > 0:
@@ -99,7 +106,6 @@ class BattleScreen(Screen):
                 self.end_player_turn()
 
     def skill_3_button(self):
-        # skill testing
         if not self.is_player_turn:
             return
         if self.current_enemy and self.current_enemy.hp > 0:
@@ -115,7 +121,6 @@ class BattleScreen(Screen):
                 self.end_player_turn()
 
     def skill_4_button(self):
-        # skill testing
         if not self.is_player_turn:
             return
         heal = 20
@@ -157,14 +162,43 @@ class BattleScreen(Screen):
         self.ids.skill_2.disabled = False
         self.ids.skill_3.disabled = False
         self.ids.skill_4.disabled = False
+        self.ids.backpack.disabled = False
 
     def backpack_button(self):
-        items = {"Item 1": 10, "Item 2": 20, "Item 3": 30}
-        p = BackpackPopup(item_list=items, callback_func=self.update_selection)
+        if not self.is_player_turn or (
+            self.current_enemy and self.current_enemy.hp <= 0
+        ):
+            return
+        p = BackpackPopup(item_list=self.inventory, callback_func=self.use_item)
         p.open()
 
-    def update_selection(self, selected_item):
-        self.ids.result_label.text = f"Select: {selected_item}"
+    def use_item(self, item_name):
+        if item_name not in self.inventory or self.inventory[item_name] <= 0:
+            return
+        used_successfully = False
+
+        if item_name == "Potion":
+            heal_amount = 50
+            self.hero.hp += heal_amount
+            if self.hero.hp > self.hero.max_hp:
+                self.hero.hp = self.hero.max_hp
+            self.ids.result_label.text = f"Used Potion! Healed {heal_amount} HP."
+            used_successfully = True
+
+        elif item_name == "Bomb":
+            if self.current_enemy and self.current_enemy.hp > 0:
+                damage = 30
+                self.current_enemy.hp -= damage
+                self.ids.result_label.text = f"Threw Bomb! Dealt {damage} damage!"
+                used_successfully = True
+
+        if used_successfully:
+            self.inventory[item_name] -= 1
+            if self.inventory[item_name] == 0:
+                del self.inventory[item_name]
+            self.update_ui()
+            if not self.check_enemy_status():
+                self.end_player_turn()
 
     def run_button(self):
         self.manager.transition.direction = "right"
