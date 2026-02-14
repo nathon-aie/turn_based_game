@@ -31,6 +31,7 @@ class WorldScreen(Screen):
         super().__init__(**kwargs)
         self._keyboard = Window.request_keyboard(self._on_keyboard_closed, self)
         self._keyboard.bind(on_key_down=self._on_key_down)
+        Clock.schedule_once(self.check_auto_load, 0)
 
     def _on_keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_key_down)
@@ -139,3 +140,7 @@ class WorldScreen(Screen):
         if pos_data:
             self.ids.player_character.pos = tuple(pos_data)
         print("Game Loaded Successfully!")
+
+    def check_auto_load(self, dt):
+        if os.path.exists("savefile.json"):
+            self.load_game()
