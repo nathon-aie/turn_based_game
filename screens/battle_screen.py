@@ -58,7 +58,7 @@ class BattleScreen(Screen):
         self.start_player_turn()
 
     def spawn_hero(self):
-        self.hero = Hero("Tanker")
+        self.hero = Hero("Mambo")
         self.update_skill_buttons()
 
     def spawn_enemy(self):

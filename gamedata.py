@@ -12,13 +12,12 @@ HEROES = {
         "atk": 10,
         "skills": ["Punch", "Fireball", "Heal", "Nuke"],
     },
-    "Tanker": {"hp": 200, "atk": 5, "skills": ["Punch", "Heal"]},
 }
 
 ENEMIES = {
-    "Noob Slayer": {"hp": 500, "atk": 10, "skills": ["Punch"]},
-    "Goblin Slayer": {"hp": 500, "atk": 15, "skills": ["Fireball", "Slash"]},
-    "God Slayer": {"hp": 500, "atk": 20, "skills": ["Nuke"]},
-    "Anuthin": {"hp": 1000, "atk": 25, "skills": ["Punch", "Fireball", "Slash"]},
-    "Anuthin Slayer": {"hp": 1500, "atk": 30, "skills": ["Nuke"]},
+    "Noob Slayer": {"hp": 100, "atk": 10, "skills": ["Punch"]},
+    "Goblin Slayer": {"hp": 200, "atk": 15, "skills": ["Fireball", "Slash"]},
+    "God Slayer": {"hp": 500, "atk": 30, "skills": ["Nuke"]},
+    "Anuthin": {"hp": 250, "atk": 20, "skills": ["Punch", "Fireball", "Slash"]},
+    "Anuthin Slayer": {"hp": 700, "atk": 18, "skills": ["Nuke"]},
 }
