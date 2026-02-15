@@ -14,7 +14,7 @@ from widgets.backpack import BackpackPopup
 
 Builder.load_file("screens/world_screen.kv")
 
-
+# พื้นที่และข้อมูลแผนที่
 TILE_SIZE = 60
 SPAWN_POINT = (60, 60)
 tile_map = [
@@ -33,40 +33,15 @@ class WorldScreen(Screen):
         super().__init__(**kwargs)
         self._keyboard = Window.request_keyboard(self._on_keyboard_closed, self)
         self._keyboard.bind(on_key_down=self._on_key_down)
-        Clock.schedule_once(self.check_auto_load, 0)
+        Clock.schedule_once(self.check_auto_load, 0)  # โหลดเซฟอัตโนมัติ
         self.bgm = SoundLoader.load("audio/mambo-matikanetannhauser.mp3")
 
+    # เมื่อหน้าจอถูกปิดให้ยกเลิกการจับคีย์บอร์ด
     def _on_keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_key_down)
         self._keyboard = None
 
-    def on_enter(self):
-        self.draw_map()
-        if self.bgm:
-            self.bgm.loop = True
-            self.bgm.play()
-
-    def on_leave(self):
-        if self.bgm:
-            self.bgm.stop()
-
-    def draw_map(self):
-        map_area = self.ids.map_area
-        with map_area.canvas.before:
-            for row_index, row_data in enumerate(tile_map):
-                for col_index, tile_type in enumerate(row_data):
-                    x = col_index * TILE_SIZE
-                    y = row_index * TILE_SIZE
-                    if tile_type == 1:  # Wall
-                        Color(0.5, 0.5, 0.5, 1)
-                    elif tile_type == 2:  # Bush
-                        Color(0, 0.5, 0, 1)
-                    elif tile_type == 3:  # Water (ฟ้า)
-                        Color(0, 0.4, 0.8, 1)
-                    else:  # Ground (0)
-                        Color(0.2, 0.8, 0.2, 1)
-                    Rectangle(pos=(x, y), size=(TILE_SIZE, TILE_SIZE))
-
+    # จัดการการเคลื่อนที่ของตัวละครและการตรวจสอบชนิดของพื้นผิว
     def _on_key_down(self, keyboard, keycode, text, modifiers):
         player = self.ids.player_character
         cur_col = int(player.pos[0] / TILE_SIZE)
@@ -95,7 +70,6 @@ class WorldScreen(Screen):
             return
         if target_tile == 3:  # ตกน้ำ (วาร์ปกลับจุดเกิด)
             player.pos = SPAWN_POINT
-            print("You fell into the water! Respawning...")
             return
         player.pos = (next_col * TILE_SIZE, next_row * TILE_SIZE)
         if target_tile == 2:
@@ -103,42 +77,67 @@ class WorldScreen(Screen):
                 self.manager.transition.direction = "left"
                 self.manager.current = "battle"
 
-    def status_button(self):
-        character = self.manager.get_screen("battle")
-        if hasattr(character, "hero") and character.hero:
-            popup = StatusPopup(character.hero)
-            popup.open()
+    # เมื่อเข้าหน้าจอให้วาดแผนที่
+    def on_enter(self):
+        self.draw_map()
+        self.bgm.loop = True
+        self.bgm.play()
 
+    def on_leave(self):
+        self.bgm.stop()
+
+    # สร้างแผนที่จากข้อมูลใน tile_map และวาดบนหน้าจอ
+    def draw_map(self):
+        map_area = self.ids.map_area
+        with map_area.canvas.before:
+            for row_index, row_data in enumerate(tile_map):
+                for col_index, tile_type in enumerate(row_data):
+                    x = col_index * TILE_SIZE
+                    y = row_index * TILE_SIZE
+                    if tile_type == 1:  # Wall
+                        Color(0.5, 0.5, 0.5, 1)
+                    elif tile_type == 2:  # Bush
+                        Color(0, 0.5, 0, 1)
+                    elif tile_type == 3:  # Water (ฟ้า)
+                        Color(0, 0.4, 0.8, 1)
+                    else:  # Ground (0)
+                        Color(0.2, 0.8, 0.2, 1)
+                    Rectangle(pos=(x, y), size=(TILE_SIZE, TILE_SIZE))
+
+    # ปุ่มสถานะของ Hero
+    def status_button(self):
+        character = self.manager.get_screen("battle")  # ดึงข้อมูลจาก Battle Screen
+        popup = StatusPopup(character.hero)
+        popup.open()
+
+    # ปุ่มไอเทมในกระเป๋า
     def backpack_button(self):
-        backpack = self.manager.get_screen("battle")
+        backpack = self.manager.get_screen("battle")  # ดึงข้อมูลจาก Battle Screen
         popup = BackpackPopup(item_list=backpack.inventory, callback_func=None)
         popup.open()
 
-    def do_nothing(self):
-        pass
-
+    # ปุ่มออกจากเกมกลับไปหน้า Title Screen
     def exit_button(self):
         self.manager.transition.direction = "right"
         self.manager.current = "title"
 
+    # ปุ่มเซฟเกม
     def save_game(self):
-        battle_screen = self.manager.get_screen("battle")
-        if not battle_screen.hero:
-            return
+        battle_screen = self.manager.get_screen("battle")  # ดึงข้อมูลจาก Battle Screen
+        # สร้างข้อมูลเซฟจาก Hero, Inventory, ตำแหน่งปัจจุบัน
         save_data = {
             "hero": battle_screen.hero.to_dict(),
             "inventory": battle_screen.inventory,
             "position": self.ids.player_character.pos,
-            "current_map": "world_1",
         }
+        # บันทึกข้อมูลลงไฟล์ JSON
         with open("savefile.json", "w") as f:
             json.dump(save_data, f, indent=4)
             print("Game saved successfully.")
 
+    # โหลดเกม
     def load_game(self):
-        if not os.path.exists("savefile.json"):
-            print("No save file found!")
-            return
+        # เปิดไฟล์ JSON และโหลดข้อมูลกลับมาใช้ในเกม
         with open("savefile.json", "r") as f:
             data = json.load(f)
         battle_screen = self.manager.get_screen("battle")
@@ -155,6 +154,7 @@ class WorldScreen(Screen):
             self.ids.player_character.pos = tuple(pos_data)
         print("Game Loaded Successfully!")
 
+    # โหลดเซฟอัตโนมัติ
     def check_auto_load(self, dt):
         if os.path.exists("savefile.json"):
             self.load_game()

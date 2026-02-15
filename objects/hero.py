@@ -11,7 +11,7 @@ class Hero:
         self.atk_buff = 1
         self.skills = data.get("skills", [])
 
-    # 1. แปลงร่างตัวเองเป็น Dictionary (เพื่อเตรียม Save)
+    # แปลงเป็น Dictionary เพื่อเตรียมเซฟ
     def to_dict(self):
         return {
             "name": self.name,
@@ -19,10 +19,9 @@ class Hero:
             "max_hp": self.max_hp,
             "atk": self.atk,
             "atk_buff": self.atk_buff,
-            # ถ้ามีตำแหน่งใน WorldScreen อาจต้องส่งมาเก็บด้วย หรือเก็บแยก
         }
 
-    # 2. รับข้อมูล Dictionary มาแปลงเป็นตัวเอง (ตอน Load)
+    # รับข้อมูล Dictionary มาแปลงสำหรับโหลด
     def load_from_dict(self, data):
         self.name = data.get("name", self.name)
         self.hp = data.get("hp", self.hp)
