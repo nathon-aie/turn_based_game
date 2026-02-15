@@ -23,6 +23,8 @@ class BackpackPopup(Popup):
             )
             btn.bind(on_release=lambda instance, x=item_name: self.show_details(x))
             grid.add_widget(btn)
+        if self.callback_func is None:
+            self.ids.use_button.disabled = True
 
     def show_details(self, item_name):
         self.selected_item = item_name

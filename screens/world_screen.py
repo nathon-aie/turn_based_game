@@ -111,9 +111,7 @@ class WorldScreen(Screen):
 
     def backpack_button(self):
         backpack = self.manager.get_screen("battle")
-        popup = BackpackPopup(
-            item_list=backpack.inventory, callback_func=self.do_nothing
-        )
+        popup = BackpackPopup(item_list=backpack.inventory, callback_func=None)
         popup.open()
 
     def do_nothing(self):
