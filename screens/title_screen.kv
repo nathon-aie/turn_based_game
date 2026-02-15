@@ -20,3 +20,11 @@
             size: (200, 100)
             pos_hint: {'center_x': 0.5}
             on_release: app.quit_button()
+        Button:
+            id: music_btn
+            text: 'Music: ON'
+            font_size: 30
+            size_hint: (None, None)
+            size: (200, 80)
+            pos_hint: {'center_x': 0.5}
+            on_release: root.toggle_music()
