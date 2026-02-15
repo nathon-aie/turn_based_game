@@ -1,7 +1,7 @@
 TBG Demo (Turn Based Game Demo)
 
 มีหน้าจอหลัก 3 หน้าจอ (Screens):
-    1. Title Screen (เริ่มต้น)\n
+    1. Title Screen (เริ่มต้น) \
     2. World Screen (โลก สามารถเดินได้)
     3. Battle Screen (ต่อสู้)
 
