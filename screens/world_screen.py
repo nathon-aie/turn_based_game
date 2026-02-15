@@ -4,6 +4,7 @@ from kivy.lang import Builder
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Rectangle
 from kivy.clock import Clock
+from kivy.core.audio import SoundLoader
 import random
 import json
 import os
@@ -33,6 +34,7 @@ class WorldScreen(Screen):
         self._keyboard = Window.request_keyboard(self._on_keyboard_closed, self)
         self._keyboard.bind(on_key_down=self._on_key_down)
         Clock.schedule_once(self.check_auto_load, 0)
+        self.bgm = SoundLoader.load("audio/mambo-matikanetannhauser.mp3")
 
     def _on_keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_key_down)
@@ -40,6 +42,13 @@ class WorldScreen(Screen):
 
     def on_enter(self):
         self.draw_map()
+        if self.bgm:
+            self.bgm.loop = True
+            self.bgm.play()
+
+    def on_leave(self):
+        if self.bgm:
+            self.bgm.stop()
 
     def draw_map(self):
         map_area = self.ids.map_area
@@ -84,7 +93,7 @@ class WorldScreen(Screen):
         target_tile = tile_map[next_row][next_col]
         if target_tile == 1:
             return
-        if target_tile == 3: # ตกน้ำ (วาร์ปกลับจุดเกิด)
+        if target_tile == 3:  # ตกน้ำ (วาร์ปกลับจุดเกิด)
             player.pos = SPAWN_POINT
             print("You fell into the water! Respawning...")
             return

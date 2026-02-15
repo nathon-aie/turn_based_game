@@ -8,7 +8,7 @@ Builder.load_file("screens/title_screen.kv")
 class TitleScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.bgm = SoundLoader.load('audio/bgm.mp3') 
+        self.bgm = SoundLoader.load("audio/bgm.mp3")
         if self.bgm:
             self.bgm.loop = True
         self.music_enabled = True
@@ -29,9 +29,8 @@ class TitleScreen(Screen):
             else:
                 self.bgm.play()
                 self.music_enabled = True
-        
-        # อัปเดตข้อความปุ่ม
         self.ids.music_btn.text = f"Music: {'ON' if self.music_enabled else 'OFF'}"
+
     def play_button(self):
         self.manager.transition.direction = "left"
         self.manager.current = "world"
