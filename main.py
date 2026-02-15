@@ -1,5 +1,9 @@
+from kivy.config import Config
+
+Config.set("graphics", "resizable", "0")
+Config.set("graphics", "width", "720")
+Config.set("graphics", "height", "480")
 from kivy.app import App
-from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, Screen
 from screens.title_screen import TitleScreen
 from screens.battle_screen import BattleScreen
@@ -11,7 +15,7 @@ class TurnBasedApp(App):
         self.stop()
 
     def build(self):
-        Window.size = (720, 480)
+        # Window.size = (720, 480)
         sm = ScreenManager()
         sm.add_widget(TitleScreen(name="title"))
         sm.add_widget(BattleScreen(name="battle"))
