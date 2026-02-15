@@ -1,6 +1,7 @@
 from kivy.uix.popup import Popup
 from kivy.factory import Factory
 from kivy.lang import Builder
+import gamedata
 
 Builder.load_file("widgets/backpack.kv")
 
@@ -11,10 +12,10 @@ class BackpackPopup(Popup):
         self.item_list = item_list
         self.callback_func = callback_func
         self.selected_item = None
-        self.item_descriptions = {
-            "Potion": "Restores 50 HP.\nA simple red potion.",
-            "Bomb": "Deals 30 DMG to enemy.\nExplosive!",
-        }
+        # self.item_descriptions = {
+        #     "Potion": "Restores 50 HP.\nA simple red potion.",
+        #     "Bomb": "Deals 30 DMG to enemy.\nExplosive!",
+        # }
 
         grid = self.ids.item_grid_layout
         for item_name, count in item_list.items():
@@ -28,7 +29,8 @@ class BackpackPopup(Popup):
 
     def show_details(self, item_name):
         self.selected_item = item_name
-        desc = self.item_descriptions.get(item_name, "No description available.")
+        item_data = gamedata.ITEMS.get(item_name)
+        desc = item_data.get("description", "No description available.")
         self.ids.description_label.text = f"[b]{item_name}[/b]\n\n{desc}"
         self.ids.description_label.markup = True
 

@@ -17,7 +17,7 @@ class BattleScreen(Screen):
         self.current_enemy = None
         self.is_player_turn = True
         self.spawn_hero()
-        self.inventory = {"Potion": 10, "Bomb": 10}
+        self.inventory = {"Potion": 10, "Bomb": 10, "Super Potion": 5}
         self.bgm = SoundLoader.load("audio/helios_rap.mp3")
 
     def button_disabled(self, *args):
@@ -173,23 +173,23 @@ class BattleScreen(Screen):
     def use_item(self, item_name):
         if item_name not in self.inventory or self.inventory[item_name] <= 0:
             return
+        item_data = gamedata.ITEMS.get(item_name)
+        if not item_data:
+            return
+        item_type = item_data["type"]
+        value = item_data["value"]
         used_successfully = False
-
-        if item_name == "Potion":
-            heal_amount = 50
-            self.hero.hp += heal_amount
+        if item_type == "heal":
+            self.hero.hp += value
             if self.hero.hp > self.hero.max_hp:
                 self.hero.hp = self.hero.max_hp
-            self.ids.result_label.text = f"Used Potion! Healed {heal_amount} HP."
+            self.ids.result_label.text = f"Used {item_name}! Healed {value} HP."
             used_successfully = True
-
-        elif item_name == "Bomb":
+        elif item_type == "attack":
             if self.current_enemy and self.current_enemy.hp > 0:
-                damage = 30
-                self.current_enemy.hp -= damage
-                self.ids.result_label.text = f"Threw Bomb! Dealt {damage} damage!"
+                self.current_enemy.hp -= value
+                self.ids.result_label.text = f"Used {item_name}! Dealt {value} damage!"
                 used_successfully = True
-
         if used_successfully:
             self.inventory[item_name] -= 1
             if self.inventory[item_name] == 0:
