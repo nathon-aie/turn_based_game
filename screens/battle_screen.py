@@ -2,6 +2,7 @@ from kivy.uix.screenmanager import Screen
 from widgets.backpack import BackpackPopup
 from kivy.lang import Builder
 from kivy.clock import Clock
+from kivy.core.audio import SoundLoader
 from objects.hero import Hero
 from objects.enemy import Enemy
 import random
@@ -17,6 +18,7 @@ class BattleScreen(Screen):
         self.is_player_turn = True
         self.spawn_hero()
         self.inventory = {"Potion": 10, "Bomb": 10}
+        self.bgm = SoundLoader.load("audio/helios_rap.mp3")
 
     def button_disabled(self, *args):
         self.ids.skill_1.disabled = True
@@ -41,6 +43,13 @@ class BattleScreen(Screen):
         Clock.schedule_once(self.enable_skills, 1)
         self.button_disabled()
         self.ids.result_label.text = f"{self.current_enemy.name} appears!"
+        if self.bgm:
+            self.bgm.loop = True
+            self.bgm.play()
+
+    def on_leave(self):
+        if self.bgm:
+            self.bgm.stop()
 
     def enable_skills(self, dt):
         self.button_enabled()
