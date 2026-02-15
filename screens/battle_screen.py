@@ -65,6 +65,17 @@ class BattleScreen(Screen):
         enemy_list = list(gamedata.ENEMIES.keys())
         enemy_name = random.choice(enemy_list)
         self.current_enemy = Enemy(enemy_name)
+        
+        enemy_image_map = {
+            "Anuthin": "pics/character/auntin.png",  
+            "Anuthin Slayer": "pics/character/ptae.jpg",
+            "Noob Slayer": "pics/character/noob.jpg",
+            "Goblin Slayer": "pics/character/spiki.jpg",
+            "God Slayer": "pics/character/cj.jpg"
+        }
+
+        self.ids.enemy_character.source = enemy_image_map.get(enemy_name, "")
+        self.ids.enemy_character.reload()
 
     def update_skill_buttons(self):
         buttons = [
