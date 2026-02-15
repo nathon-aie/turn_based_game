@@ -37,7 +37,6 @@ class BattleScreen(Screen):
         self.ids.run.disabled = False
 
     def on_enter(self):
-        self.hero.atk_buff = 1
         self.spawn_enemy()
         self.update_ui()
         Clock.schedule_once(self.enable_skills, 1)
@@ -65,13 +64,13 @@ class BattleScreen(Screen):
         enemy_list = list(gamedata.ENEMIES.keys())
         enemy_name = random.choice(enemy_list)
         self.current_enemy = Enemy(enemy_name)
-        
+
         enemy_image_map = {
-            "Anuthin": "pics/character/auntin.png",  
+            "Anuthin": "pics/character/auntin.png",
             "Anuthin Slayer": "pics/character/ptae.jpg",
             "Noob Slayer": "pics/character/noob.jpg",
             "Goblin Slayer": "pics/character/spiki.jpg",
-            "God Slayer": "pics/character/cj.jpg"
+            "God Slayer": "pics/character/cj.jpg",
         }
 
         self.ids.enemy_character.source = enemy_image_map.get(enemy_name, "")
