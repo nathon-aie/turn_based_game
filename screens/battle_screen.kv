@@ -18,14 +18,20 @@
             Image:
                 id: hero_character
                 size_hint: None, None
-                size: 100, 100
+                size: 150, 150
                 pos_hint: {'center_x': 0.3, 'center_y': 0.3}
+                canvas.before:
+                    Color:
+                        rgba: (0, 0, 0, 0.2) 
+                    Ellipse:
+                        pos: (self.x - (self.width * 0.25), self.y - 12) 
+                        size: (self.width * 1.5, self.height * 0.3)
                 canvas: 
                     Color:
-                        rgba: 1, 1, 1, 1
+                        rgba: 1, 1, 1, 1 
                     Rectangle:
-                        source: ("pics/character/mambo.jpg")
-                        pos: self.pos
+                        source: "pics/character/mambo.jpg"
+                        pos: self.pos 
                         size: self.size
             Label:
                 id: hero_stat_label
@@ -40,6 +46,12 @@
                 size_hint: None, None
                 size: 150, 150
                 pos_hint: {'center_x': 0.7, 'center_y': 0.7}
+                canvas.before:
+                    Color:
+                        rgba: (0, 0, 0, 0.2) 
+                    Ellipse:
+                        pos: (self.x - (self.width * 0.25), self.y - 12) 
+                        size: (self.width * 1.5, self.height * 0.3)
             Label:
                 id: enemy_stat_label
                 text: ""
