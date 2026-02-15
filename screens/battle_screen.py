@@ -71,7 +71,8 @@ class BattleScreen(Screen):
             "Anuthin Slayer": "pics/character/ptae.jpg",
             "Noob Slayer": "pics/character/noob.jpg",
             "Goblin Slayer": "pics/character/spiki.jpg",
-            "God Slayer": "pics/character/cj.jpg"
+            "God Slayer": "pics/character/cj.jpg",
+            "P'tae":"pics/character/tae007.jpg"
         }
 
         self.ids.enemy_character.source = enemy_image_map.get(enemy_name, "")
