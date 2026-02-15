@@ -26,5 +26,5 @@
     4. backpack.kv (Popup กระเป๋า)
     5. stats.kv (Popup สเตตัสตัวละคร)
 ## วิธีการใช้งาน:
-    1. ติดตั้ง Kivy เปิด Command Prompt แล้วพิมพ์ `pip install kivy`
-    2. รันเกม main.py `python main.py `
+1. ติดตั้ง Kivy เปิด Command Prompt แล้วพิมพ์ `pip install kivy`
+2. รันเกม main.py `python main.py `
