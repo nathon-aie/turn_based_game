@@ -27,10 +27,9 @@
     5. stats.kv (Popup สเตตัสตัวละคร)
 ## วิธีการใช้งาน:
     1. ติดตั้ง Kivy เปิด Command Prompt แล้วพิมพ์ 
-    ```bash 
-    pip install kivy
-    <!-- pip install kivy ``` -->
+       ```bash 
+       pip install kivy
     2. รันเกม main.py 
-    ```bash 
-    python main.py 
-    ```
+       ```bash 
+       python main.py 
+       ```
