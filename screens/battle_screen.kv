@@ -15,15 +15,16 @@
                 Rectangle:
                     pos: 0, 0
                     size: (self.size)
-            Widget:
+            Image:
                 id: hero_character
                 size_hint: None, None
-                size: 75, 75
+                size: 100, 100
                 pos_hint: {'center_x': 0.3, 'center_y': 0.3}
                 canvas: 
                     Color:
                         rgba: 1, 1, 1, 1
                     Rectangle:
+                        source: ("pics/character/mambo.jpg")
                         pos: self.pos
                         size: self.size
             Label:
@@ -34,17 +35,11 @@
                 size_hint: None, None
                 size: 200, 50
                 pos_hint: {'center_x': 0.1, 'center_y': 0.2}
-            Widget:
+            Image:
                 id: enemy_character
                 size_hint: None, None
-                size: 75, 75
+                size: 150, 150
                 pos_hint: {'center_x': 0.7, 'center_y': 0.7}
-                canvas: 
-                    Color:
-                        rgba: 1, 0, 0, 1
-                    Rectangle:
-                        pos: self.pos
-                        size: self.size
             Label:
                 id: enemy_stat_label
                 text: ""
